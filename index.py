@@ -1,5 +1,5 @@
-from typing import Collection
 import boto3
+
 
 s3 = boto3.resource('s3')
 client = boto3.client('rekognition')
@@ -20,7 +20,7 @@ def indexa_colecao(imagens):
             Image = {
                 'S3Object': {
                     'Bucket': 'bernardo-imagens',
-                    'Name': i
+                    'Name': i,
                 },
             },
         )
