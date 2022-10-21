@@ -8,6 +8,7 @@ def lista_imagens():
     bucket = s3.Bucket('bernardo-imagens')
     for imagem in bucket.objects.all():
         imagens.append(imagem.key)
+    print(imagens)
     return imagens
 
 def indexa_colecao(imagens):
@@ -23,6 +24,10 @@ def indexa_colecao(imagens):
                 },
             },
         )
+
+response = client.create_collection(
+    CollectionId = 'faces'
+)
 
 imagens = lista_imagens()
 indexa_colecao(imagens)
