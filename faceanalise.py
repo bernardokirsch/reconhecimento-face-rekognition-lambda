@@ -45,7 +45,11 @@ def gera_dados_json(resultado_comparacao):
             perfil = dict(nome = face_matches['FaceMatches'][0]['Face']['ExternalImageId'], faceMatch = round(face_matches['FaceMatches'][0]['Similarity'], 2))
             dados_json.append(perfil)
     return dados_json
- 
+
+def publica_dados(dados_json):
+    arquivo = s3.Object('bernardo-site', 'dados.json')
+    arquivo.put(Body = json.dumps(dados_json))
+
 faces_detectadas = detecta_faces()
 faceId_detectadas = lista_faceId_detectadas(faces_detectadas)
 resultado_comparacao = compara_imagens(faceId_detectadas)
