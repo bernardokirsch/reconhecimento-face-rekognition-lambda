@@ -32,7 +32,7 @@ def compara_imagens(faceId_detectadas):
             client.search_faces(
                 CollectionId = 'faces',
                 FaceId = id,
-                FaceMatchThreshold = 97, # porcentagem de similaridade
+                FaceMatchThreshold = 93, # porcentagem de similaridade
                 MaxFaces = 10,
             )
         )
@@ -40,18 +40,28 @@ def compara_imagens(faceId_detectadas):
 
 def gera_dados_json(resultado_comparacao):
     dados_json = []
+    dict_analise = dict(nome = 'analise', faceMatch = 100)
     for face_matches in resultado_comparacao:
         if (len(face_matches.get('FaceMatches'))) >= 1:
             perfil = dict(nome = face_matches['FaceMatches'][0]['Face']['ExternalImageId'], faceMatch = round(face_matches['FaceMatches'][0]['Similarity'], 2))
             dados_json.append(perfil)
+    dados_json.append(dict_analise)
     return dados_json
-
+    
 def publica_dados(dados_json):
     arquivo = s3.Object('bernardo-site', 'dados.json')
     arquivo.put(Body = json.dumps(dados_json))
 
-faces_detectadas = detecta_faces()
-faceId_detectadas = lista_faceId_detectadas(faces_detectadas)
-resultado_comparacao = compara_imagens(faceId_detectadas)
-dados_json = gera_dados_json(resultado_comparacao)
-print(json.dumps(dados_json, indent = 4))
+def exclui_imagem_colecao(faceId_detectadas):
+    client.delete_faces(
+        CollectionId = 'faces',
+        FaceIds = faceId_detectadas,
+    )
+
+def main(event, context):
+    faces_detectadas = detecta_faces()
+    faceId_detectadas = lista_faceId_detectadas(faces_detectadas)
+    resultado_comparacao = compara_imagens(faceId_detectadas)
+    dados_json = gera_dados_json(resultado_comparacao)
+    publica_dados(dados_json)
+    exclui_imagem_colecao(faceId_detectadas)

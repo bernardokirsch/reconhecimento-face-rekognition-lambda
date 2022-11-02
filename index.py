@@ -25,9 +25,9 @@ def indexa_colecao(imagens):
             },
         )
 
-response = client.create_collection(
-    CollectionId = 'faces'
-)
+#response = client.create_collection(
+#    CollectionId = 'faces'
+#)
 
 imagens = lista_imagens()
 indexa_colecao(imagens)
